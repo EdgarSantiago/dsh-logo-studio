@@ -1,0 +1,90 @@
+{
+  "name": "@local/dsh-logo-studio",
+  "version": "0.2.1",
+  "description": "Personalize a marca do DeepSeek Harness pelo painel de configurações.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/EdgarSantiago/dsh-logo-studio.git" },
+  "homepage": "https://github.com/EdgarSantiago/dsh-logo-studio#readme",
+  "bugs": { "url": "https://github.com/EdgarSantiago/dsh-logo-studio/issues" },
+  "keywords": ["dsh-plugin", "deepseek-harness", "logo", "branding", "appearance", "ui"],
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./dist/client.js",
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "dist",
+    "cordis.patch.yml",
+    "README.md",
+    "locale",
+    "icon.svg",
+    "LICENSE",
+    "THIRD_PARTY.md"
+  ],
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-client-locale"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">=24.11.0",
+    "dsh": "0.2.2-rc.1 || 0.2.2-rc.2"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "pretest": "npm run build",
+    "test": "node --test tests/*.test.js",
+    "test:browser": "node tests/browser.mjs"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.1.0",
+    "@deepseek-ai/dsh-client-store": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-client-ui-primitives": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-client-ui-slots": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-util-code-language": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-util-file-drag": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-util-workspace-path": "0.2.2-rc.1",
+    "@shikijs/langs": "4.6.0",
+    "@types/mdast": "4.0.4",
+    "anser": "2.3.5",
+    "clsx": "2.1.1",
+    "diff": "9.0.0",
+    "esbuild": "0.25.12",
+    "immer": "10.1.1",
+    "katex": "0.18.10",
+    "mdast-util-from-markdown": "2.1.0",
+    "mdast-util-gfm": "3.1.0",
+    "mdast-util-math": "3.0.0",
+    "micromark-core-commonmark": "2.0.4",
+    "micromark-extension-gfm": "3.0.0",
+    "micromark-extension-math": "3.1.0",
+    "micromark-factory-space": "2.1.0",
+    "micromark-util-character": "2.1.1",
+    "micromark-util-classify-character": "2.0.1",
+    "micromark-util-decode-string": "2.0.1",
+    "micromark-util-sanitize-uri": "2.0.1",
+    "micromark-util-symbol": "2.0.1",
+    "micromark-util-types": "2.0.3",
+    "playwright": "1.56.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "shiki": "4.6.0",
+    "simple-icons": "16.31.0",
+    "zustand": "4.5.7"
+  }
+}

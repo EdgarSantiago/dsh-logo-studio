@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Logo studio",
+    "description": "Customize the sidebar logo, name, badge and separate icon in Settings → General → Logo & brand. Changes stay in this browser's local storage; no uploads or model calls. Restore the original brand or disable the plugin to reveal the built-in slots again."
+  }
+}

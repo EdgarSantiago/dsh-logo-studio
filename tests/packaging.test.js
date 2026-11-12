@@ -1,0 +1,38 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+
+const root = new URL('../', import.meta.url);
+const read = path => readFile(new URL(path, root), 'utf8');
+const manifest = JSON.parse(await read('package.json'));
+
+test('public GitHub source package preserves installed identity and requires no install build', async () => {
+  assert.equal(manifest.name, '@local/dsh-logo-studio');
+  assert.equal(manifest.version, '0.2.1');
+  assert.equal(manifest.private, true);
+  assert.equal(manifest.license, 'MIT');
+  assert.equal(manifest.repository.url, 'https://github.com/EdgarSantiago/dsh-logo-studio.git');
+  assert.equal(manifest.engines.dsh, '0.2.2-rc.1 || 0.2.2-rc.2');
+  assert.ok(manifest.keywords.includes('dsh-plugin'));
+  for (const hook of ['install', 'postinstall', 'prepare', 'prepack']) assert.equal(manifest.scripts[hook], undefined);
+  assert.equal(manifest.dependencies, undefined);
+  assert.equal(manifest.exports['./icon'], './icon.svg');
+  assert.equal(manifest.exports['./locale/*.json'], './locale/*.json');
+  assert.ok(!(await read('.gitignore')).split(/\r?\n/).includes('dist/'));
+  for (const tag of ['en', 'pt']) {
+    const locale = JSON.parse(await read(`locale/${tag}.json`));
+    assert.ok(locale.meta.title && locale.meta.description);
+  }
+  assert.ok((await read('README.md')).includes('dsh plugin --profile web add github:EdgarSantiago/dsh-logo-studio'));
+  assert.ok((await read('README.md')).includes('dsh plugin --profile desktop add github:EdgarSantiago/dsh-logo-studio'));
+});
+
+test('source-only pack contains complete runtime and license resources without private output', () => {
+  const output = execFileSync('npm', ['--cache', 'node_modules/.cache/npm', 'pack', '--dry-run', '--ignore-scripts', '--json'], { cwd: fileURLToPath(root), encoding: 'utf8', timeout: 60000 });
+  const [packed] = JSON.parse(output);
+  const files = new Set(packed.files.map(file => file.path));
+  for (const file of ['index.js', 'dist/client.js', 'dist/client.js.map', 'cordis.patch.yml', 'icon.svg', 'locale/en.json', 'locale/pt.json', 'LICENSE', 'THIRD_PARTY.md', 'README.md']) assert.ok(files.has(file), file);
+  assert.ok(![...files].some(path => /node_modules|test-results|\.tgz$|\.log$/.test(path)));
+});
