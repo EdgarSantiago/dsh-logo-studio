@@ -5,6 +5,7 @@ import fs from 'node:fs/promises';
 import { SlotCore } from '@deepseek-ai/dsh-client-ui-slots';
 import { defaults, STORAGE_KEY } from '../src/model.js';
 import { css } from '../src/styles.js';
+import { dictionaries } from '../src/strings.js';
 
 test('logo settings section ends with a theme-aware divider', () => {
   assert.match(css, /\.dsh-logo-studio\s*\{[^}]*border-bottom:\s*1px solid var\(--dsw-alias-border-l3\)/);
@@ -17,14 +18,23 @@ function environment({ initial, fail = false } = {}) {
   const officialMark = () => null, officialName = () => null;
   core.register({ name: 'sidebar.brand.mark' }, officialMark); core.register({ name: 'sidebar.brand.name' }, officialName);
   const originalMark = core.entriesOfSlot('sidebar.brand.mark')[0], originalName = core.entriesOfSlot('sidebar.brand.name')[0];
-  const values = new Map(initial ? [[STORAGE_KEY, JSON.stringify(initial)]] : []), events = new Map(), styles = new Set(), dictionaries = new Set(), effects = [];
+  const values = new Map(initial ? [[STORAGE_KEY, JSON.stringify(initial)]] : []), events = new Map(), styles = new Set(), dictionaries = new Map(), effects = [];
   let plugin;
   const window = { localStorage: { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) }, addEventListener: (key, fn) => events.set(key, fn), removeEventListener: key => events.delete(key), __ModuleLoader__: { load({ factory }) { plugin = factory(() => ({})); } } };
   const document = { createElement() { const style = { dataset: {}, remove: () => styles.delete(style) }; return style; }, head: { append: style => styles.add(style) } };
   vm.runInNewContext(bundle, { window, document });
-  const ctx = { effect(fn) { effects.push(fn()); }, locale: { register(ns) { dictionaries.add(ns); return () => dictionaries.delete(ns); } }, slots: { inject(_name, fn) { return fn(); }, register(options, component) { if (fail) throw Error('register failed'); return core.register(options, component); } } };
+  const ctx = { effect(fn) { effects.push(fn()); }, locale: { register(ns, dicts) { dictionaries.set(ns, dicts); return () => dictionaries.delete(ns); } }, slots: { inject(_name, fn) { return fn(); }, register(options, component) { if (fail) throw Error('register failed'); return core.register(options, component); } } };
   return { core, plugin, ctx, styles, dictionaries, events, values, originalMark, originalName, dispose() { effects.splice(0).reverse().forEach(fn => fn()); } };
 }
+
+test('compiled client registers every translated dictionary on the native settings locale seat', () => {
+  const env = environment(); env.plugin.apply(env.ctx);
+  assert.deepEqual(JSON.parse(JSON.stringify(env.dictionaries.get('logo-studio'))), dictionaries);
+  const [settings] = env.core.entries('settings.general.item');
+  assert.equal(settings.locale, 'logo-studio');
+  env.dispose();
+  assert.equal(env.dictionaries.size, 0);
+});
 
 test('real SDK priority coexists with official slots and restore reveals exact originals', () => {
   const env = environment(); env.plugin.apply(env.ctx);

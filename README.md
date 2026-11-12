@@ -35,9 +35,25 @@ Disable or remove it in Plugin Manager. Disabling immediately releases the custo
 - Read the light/dark preview before saving. Cancel discards the draft without changing the active brand.
 - PNG, JPEG, WebP and restricted self-contained SVG uploads are supported. SVG is checked and rasterized before storage; it is never inserted as active markup.
 - **Restore original** asks for confirmation and removes only the plugin's saved key. Original slot occupants are preserved, not reconstructed.
-- English and Portuguese UI follow Harness's language setting.
+- All eight native Harness languages are supported in UI and plugin metadata: English (`en`), Brazilian Portuguese (`pt`, with a `pt-BR` resource alias), Simplified Chinese (`zh`), Japanese (`ja`), Spanish (`es`), French (`fr`), German (`de`) and Russian (`ru`). Settings and an open editor follow native language changes through slot-injected translations, including validation and confirmation text. No plugin language selector or language-preference writes are added. Your brand names, badges, images and colors stay unchanged.
 
-The plugin changes only the sidebar brand, including the collapsed rail. It does **not** change the application icon, window title, conversation startup animation or Harness files. The original DeepSeek mark is supplied by Harness, not copied into this repository.
+The plugin changes only the sidebar brand, including the collapsed rail. It does **not** change the application icon, window title, conversation startup animation or Harness files. The plugin uses the original DeepSeek mark supplied by Harness rather than bundling a separate logo asset.
+
+## Screenshots
+
+These are real screenshots supplied by the user, showing the English interface. The first has a red outline added around the button that opens the editor; the editor screenshot is unchanged apart from removing image metadata.
+
+### 1. Open the logo editor
+
+Go to **Settings → General → Logo & brand** and click **Customize logo**, highlighted in red.
+
+![Harness settings with the Customize logo button outlined in red](<docs/images/logo-studio-open-editor.png>)
+
+### 2. Customize and preview the logo
+
+Choose a logo style, edit the brand name and optional badge, and adjust the separate icon, height and text color. Check the light/dark previews, then click **Save changes**.
+
+![Logo Studio editor showing brand fields, icon upload, sizing, color and light/dark previews](<docs/images/logo-studio-editor.png>)
 
 ## Permissions, data and limitations
 
@@ -54,21 +70,23 @@ The plugin changes only the sidebar brand, including the collapsed rail. It does
 
 Only `0.2.2-rc.1 || 0.2.2-rc.2` is admitted by the manifest. The development SDK remains on rc.1. The rc.2 compatibility pass observed `logo-studio` registered in the live `settings.general.item` slot; native branding contracts were also checked. Development was on macOS; other operating systems and future releases are not visually certified.
 
-Node tests cover storage/validation, contrast logic, real SDK slot priority/restoration, unload cleanup and compiled artifact contracts. Test doubles isolate browser inputs. The optional historical browser fixture is a separate test page, not evidence of the current installed application's appearance. Publication preparation does not launch that page, fabricate a screenshot or claim a fresh live visual review. Actual automated check output is recorded below; no optional feature image is declared.
+Node tests cover storage/validation, contrast logic, real SDK slot priority/restoration, unload cleanup and compiled artifact contracts. Test doubles isolate browser inputs. The optional historical browser fixture is a separate test page, not evidence of the current installed application's appearance. The user-provided screenshots above illustrate the English interface; they are not automated browser captures or certification of the latest local translations. Publication preparation does not launch the historical fixture, fabricate screenshots or claim a fresh live visual review. Actual automated check output is recorded below; no optional feature image is declared.
 
 ### Actual automated output (2026-11-12)
 
-The publication preparation ran the commands below on the existing checkout, without installing the plugin or launching a browser:
+The local localization and README screenshot checks ran the commands below on the existing checkout, without installing the plugin, changing a profile or launching a browser:
 
 ```text
 npm test: esbuild completed
-Node tests: 19 tests, 19 passed, 0 failed
-npm pack --dry-run --ignore-scripts --json: 11 runtime/resource files
-Clean runtime copy: Host apply + Client syntax/ModuleLoader factory passed
-Rebuilt dist artifacts: byte-identical to the previous runtime
+Node tests: 24 tests, 24 passed, 0 failed
+npm pack --dry-run --ignore-scripts --json: 20 runtime/resource files, including two README screenshots
+npm pack --ignore-scripts --json --pack-destination node_modules/.cache: local archive only
+Compiled Client: all locale dictionaries + native settings locale seat registered and disposed
+Locale switch contract: copy is read from injected t at render time, including pending feedback
+Rebuilt dist/client.js and its source map
 ```
 
-The clean-copy check had no package-local `node_modules` and did not run a development build. It verifies resources and basic loadability, not a remote GitHub installation or visual behavior. The SVG icon is structurally valid; rendered icon/details appearance is not certified.
+The earlier publication clean-copy check had no package-local `node_modules` and verified basic loadability. The localization pass adds complete 46-key coverage, placeholder parity, non-English-content checks, metadata/pack coverage, compiled dictionary registration and source contracts for live native slot translations (including pending errors and confirmations). It adds no React/DOM renderer or separate browser. Browser control was unavailable: no live visual interaction, open-modal language switch or screen-reader behavior was exercised. Registration/source contracts do not certify rendered layout, a real locale-service round trip or remote GitHub installation. Distributed code/maps are checked for developer paths.
 
 ## Develop and validate
 

@@ -26,7 +26,8 @@
     "locale",
     "icon.svg",
     "LICENSE",
-    "THIRD_PARTY.md"
+    "THIRD_PARTY.md",
+    "docs/images/*.png"
   ],
   "dsh": {
     "manifestVersion": 1,

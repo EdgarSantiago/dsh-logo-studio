@@ -1,6 +1,6 @@
 import { STORAGE_KEY, createController } from './model.js';
 import { createUI } from './ui.js';
-import { en, pt } from './strings.js';
+import { dictionaries } from './strings.js';
 import { css } from './styles.js';
 
 window.__ModuleLoader__.load({ id: '@local/dsh-logo-studio', factory: require => {
@@ -25,7 +25,7 @@ window.__ModuleLoader__.load({ id: '@local/dsh-logo-studio', factory: require =>
         style.textContent = css;
         document.head.append(style);
         disposers.push(() => style.remove());
-        disposers.push(ctx.locale.register('logo-studio', { en, pt }));
+        disposers.push(ctx.locale.register('logo-studio', dictionaries));
         disposers.push(ctx.slots.inject('settings.general.item', () => ctx.slots.register({ name: 'settings.general.item', id: 'logo-studio', order: 10.6, locale: 'logo-studio' }, Settings)));
         disposers.push(ctx.slots.inject('sidebar.brand.mark', () => ctx.slots.inject('sidebar.brand.name', () => {
           let marks = [];
