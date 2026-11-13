@@ -8,7 +8,7 @@ Independent community plugin; not affiliated with DeepSeek AI. The package keeps
 
 ## Install from GitHub
 
-Requires **DeepSeek Harness `0.2.2-rc.1` or `0.2.2-rc.2`**, a managed **Web or Desktop** profile and **Node.js 24.11+**.
+Requires **DeepSeek Harness `>=0.2.2-rc.1 <0.2.3-0`**, a managed **Web or Desktop** profile and **Node.js 24.11+**. The range admits rc.3, later 0.2.2 release candidates and stable 0.2.2; it excludes 0.2.3, including its prereleases.
 
 **Web profile**
 
@@ -68,9 +68,13 @@ Choose a logo style, edit the brand name and optional badge, and adjust the sepa
 
 ## Compatibility and actual verification
 
-Only `0.2.2-rc.1 || 0.2.2-rc.2` is admitted by the manifest. The development SDK remains on rc.1. The rc.2 compatibility pass observed `logo-studio` registered in the live `settings.general.item` slot; native branding contracts were also checked. Development was on macOS; other operating systems and future releases are not visually certified.
+The manifest uses the controlled compatibility range `>=0.2.2-rc.1 <0.2.3-0`, rather than an allowlist that blocks every new 0.2.2 release candidate. The development SDK remains on rc.1. The rc.3 compatibility review checks installed locale, slot and shared Client contracts; no feature or saved-brand migration is part of this metadata change. Admission of future 0.2.2 builds is a compatibility policy, not proof that their APIs or visuals cannot change. The earlier rc.2 compatibility pass observed `logo-studio` registered in the live `settings.general.item` slot. Development was on macOS; other operating systems and future releases are not visually certified.
 
 Node tests cover storage/validation, contrast logic, real SDK slot priority/restoration, unload cleanup and compiled artifact contracts. Test doubles isolate browser inputs. The optional historical browser fixture is a separate test page, not evidence of the current installed application's appearance. The user-provided screenshots above illustrate the English interface; they are not automated browser captures or certification of the latest local translations. Publication preparation does not launch the historical fixture, fabricate screenshots or claim a fresh live visual review. Actual automated check output is recorded below; no optional feature image is declared.
+
+### Compatibility metadata checks (2026-11-13)
+
+With managed Node.js 24.21.0, `npm test` rebuilt the Client and passed **25 tests, 0 failed**, including the new manifest/lockfile/documentation consistency regression. The rebuild left the tracked Client artifacts unchanged. No profile install or browser interaction was performed by these checks.
 
 ### Actual automated output (2026-11-12)
 

@@ -8,6 +8,19 @@ const root = new URL('../', import.meta.url);
 const read = path => readFile(new URL(path, root), 'utf8');
 const manifest = JSON.parse(await read('package.json'));
 
+test('controlled 0.2.2 admission stays consistent across release metadata', async () => {
+  const lock = JSON.parse(await read('package-lock.json'));
+  assert.deepEqual(lock.packages[''].engines, manifest.engines);
+  assert.deepEqual(lock.packages[''].devDependencies, manifest.devDependencies);
+  const readme = await read('README.md');
+  assert.ok(readme.includes(`\`${manifest.engines.dsh}\``));
+  assert.ok(readme.includes('excludes 0.2.3, including its prereleases'));
+  assert.ok(!readme.includes('0.2.2-rc.1 || 0.2.2-rc.2'));
+  for (const [name, version] of Object.entries(manifest.devDependencies)) {
+    if (name.startsWith('@deepseek-ai/dsh-')) assert.equal(version, '0.2.2-rc.1', name);
+  }
+});
+
 const screenshotNames = ['logo-studio-open-editor.png', 'logo-studio-editor.png'];
 
 test('README screenshots are local PNG resources with readable alternative text', async () => {
@@ -29,7 +42,7 @@ test('public GitHub source package preserves installed identity and requires no 
   assert.equal(manifest.private, true);
   assert.equal(manifest.license, 'MIT');
   assert.equal(manifest.repository.url, 'https://github.com/EdgarSantiago/dsh-logo-studio.git');
-  assert.equal(manifest.engines.dsh, '0.2.2-rc.1 || 0.2.2-rc.2');
+  assert.equal(manifest.engines.dsh, '>=0.2.2-rc.1 <0.2.3-0');
   assert.ok(manifest.keywords.includes('dsh-plugin'));
   for (const hook of ['install', 'postinstall', 'prepare', 'prepack']) assert.equal(manifest.scripts[hook], undefined);
   assert.equal(manifest.dependencies, undefined);
